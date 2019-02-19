@@ -99,19 +99,15 @@ class Artisan implements Action
         }
     }
 
+
     /**
      * Put command and arguments in an array
      *
      * @return array
      */
-    private function getArgs()
+    private function getArgs(): array
     {
-        return array_filter(
-            array_merge([$this->command], $this->optionArgsAsArray()),
-            function($arg) {
-                return !empty($arg);
-            }
-        );
+        return array_merge([$this->command], $this->optionArgsAsArray());
     }
 
     /**
@@ -124,7 +120,15 @@ class Artisan implements Action
         if (empty($this->args)) {
             return [];
         }
-        return explode(' ', $this->args);
+        $args = [];
+        foreach (explode(' ', $this->args) as $param) {
+            $value = true;
+            if (strpos($param, '=') !== false) {
+                list($param, $value) = explode('=', $param);
+            }
+            $args[$param] = $value;
+        }
+        return $args;
     }
 
     /**
