@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace CaptainHook\Hook\Laravel;
+namespace CaptainHook\Hooks\Laravel;
 
 use CaptainHook\App\Console\IO;
 use Symfony\Component\Console\Output\Output as SymfonyOutput;
