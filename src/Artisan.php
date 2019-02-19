@@ -7,12 +7,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace CapatainHook\Hooks\Laravel;
+namespace CaptainHook\Hooks\Laravel;
 
 use CaptainHook\App\Config;
 use CaptainHook\App\Console\IO;
 use CaptainHook\App\Hook\Action;
-use CaptainHook\Hook\Laravel\Output;
 use Illuminate\Contracts\Console\Kernel;
 use SebastianFeldmann\Git\Repository;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -91,7 +90,7 @@ class Artisan implements Action
         if (!self::$app) {
             $this->setupLaravelApp($appBootstrap);
         }
-        return self::$app->make(Illuminate\Contracts\Console\Kernel::class);
+        return self::$app->make(Kernel::class);
     }
 
     /**
