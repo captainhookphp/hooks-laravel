@@ -34,6 +34,21 @@ class Artisan implements Action
     private static $app;
 
     /**
+     * @var string
+     */
+    private $bootstrap;
+
+    /**
+     * @var string
+     */
+    private $command;
+
+    /**
+     * @var string
+     */
+    private $args;
+
+    /**
      * Executes the action.
      *
      * Options for this actions are:
@@ -50,13 +65,10 @@ class Artisan implements Action
      */
     public function execute(Config $config, IO $io, Repository $repository, Config\Action $action): void
     {
-        $options   = $action->getOptions();
-        $bootstrap = $options->get('bootstrap');
-        $command   = $options->get('command');
-        $args      = array_merge([$command], $this->transformArgs($options->get('args', '')));
+        $this->setup($action->getOptions());
 
-        $kernel = $this->getArtisanKernel($bootstrap);
-        $input  = new ArrayInput($args);
+        $kernel = $this->getArtisanKernel();
+        $input  = new ArrayInput($this->getArgs());
         $output = new Output($io);
         $status = $kernel->handle($input, $output);
 
@@ -68,27 +80,63 @@ class Artisan implements Action
     }
 
     /**
-     * Transform argument string into array
+     * Sets and validates the required options
      *
-     * @param  string $args
+     * @param  \CaptainHook\App\Config\Options $options
+     * @throws \Exception
+     */
+    private function setup(Config\Options $options)
+    {
+        $this->bootstrap = $options->get('bootstrap', '');
+        $this->command   = $options->get('command', '');
+        $this->args      = $options->get('args', '');
+
+        if (empty($this->bootstrap)) {
+            throw new \Exception('Option \'bootstrap\' is missing');
+        }
+        if (empty($this->command)) {
+            throw new \Exception('Option \'command\' is missing');
+        }
+    }
+
+    /**
+     * Put command and arguments in an array
+     *
      * @return array
      */
-    private function transformArgs(string $args): array
+    private function getArgs()
     {
-        return explode(' ', $args);
+        return array_filter(
+            array_merge([$this->command], $this->optionArgsAsArray()),
+            function($arg) {
+                return !empty($arg);
+            }
+        );
+    }
+
+    /**
+     * Return the configured arguments as array
+     *
+     * @return array
+     */
+    private function optionArgsAsArray(): array
+    {
+        if (empty($this->args)) {
+            return [];
+        }
+        return explode('', $this->args);
     }
 
     /**
      * Return the Artisan kernel
      *
-     * @param  string $appBootstrap
      * @return \Illuminate\Contracts\Console\Kernel
      * @throws \Exception
      */
-    private function getArtisanKernel(string $appBootstrap): Kernel
+    private function getArtisanKernel(): Kernel
     {
         if (!self::$app) {
-            $this->setupLaravelApp($appBootstrap);
+            $this->setupLaravelApp();
         }
         return self::$app->make(Kernel::class);
     }
@@ -96,15 +144,14 @@ class Artisan implements Action
     /**
      * Create the Laravel application and kernel
      *
-     * @param  string $bootstrap
      * @return void
      * @throws \Exception
      */
-    private function setupLaravelApp(string $bootstrap): void
+    private function setupLaravelApp(): void
     {
-        if (!file_exists($bootstrap)) {
+        if (!file_exists($this->bootstrap)) {
             throw new \Exception('Laravel application bootstrap file not found');
         }
-        self::$app = require_once $bootstrap;
+        self::$app = require_once $this->bootstrap;
     }
 }
