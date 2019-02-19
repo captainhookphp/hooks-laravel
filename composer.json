@@ -1,0 +1,40 @@
+{
+  "name": "captainhook/hooks-laravel",
+  "type": "library",
+  "description": "git hooks for Laravel developers",
+  "keywords": ["git", "hooks", "laravel"],
+  "homepage": "https://github.com/captainhookphp/hooks-laravel",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Sebastian Feldmann",
+      "email": "sf@sebastian-feldmann.info"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/captainhookphp/hooks-laravel/issues"
+  },
+  "autoload": {
+    "psr-4": {
+      "CaptainHook\\Hooks\\Laravel\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "CaptainHook\\Hooks\\Laravel\\": "tests/Laravel/"
+    }
+  },
+  "require": {
+    "php": ">=7.1.0",
+    "captainhook/captainhook": "^4.0"
+  },
+  "require-dev": {
+    "laravel/framework": "^5.0",
+    "phpunit/phpunit": "^7.0"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "0.9.x-dev"
+    }
+  }
+}
