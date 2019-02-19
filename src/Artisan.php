@@ -124,7 +124,7 @@ class Artisan implements Action
         if (empty($this->args)) {
             return [];
         }
-        return explode('', $this->args);
+        return explode(' ', $this->args);
     }
 
     /**
